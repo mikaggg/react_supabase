@@ -1,6 +1,7 @@
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Box, Button, Container, Paper, Typography } from "@mui/material";
-import { InputText } from "../Atoms/InputText";
+import Box from "@mui/material/Box";
+import { Button, Container, Paper, Typography } from "@mui/material";
+import { InputText } from "../../component/InputText";
 import { supabase } from "../../utils/supabase";
 import { useNavigate } from "react-router-dom";
 

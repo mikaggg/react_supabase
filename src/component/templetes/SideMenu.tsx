@@ -15,11 +15,11 @@ const SideMenu: React.FC = () => {
         </ListItemIcon>
         <ListItemText primary="Home" />
       </ListItemButton>
-      <ListItemButton href="/login">
+      <ListItemButton href="">
         <ListItemIcon>
           <ShoppingCartIcon />
         </ListItemIcon>
-        <ListItemText primary="Login" />
+        <ListItemText primary="menu2" />
       </ListItemButton>
       <ListItemButton href="/chat">
         <ListItemIcon>

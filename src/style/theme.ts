@@ -1,4 +1,6 @@
-import { createTheme, responsiveFontSizes } from "@mui/material";
+// import { createTheme } from "@mui/material/styles";
+import createTheme from "@mui/material/styles/createTheme";
+import { responsiveFontSizes } from "@mui/material";
 import { red } from "@mui/material/colors";
 
 const theme = createTheme({

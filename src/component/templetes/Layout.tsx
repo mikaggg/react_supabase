@@ -1,6 +1,5 @@
 import * as React from "react";
-import { styled, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
+import { styled } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
@@ -9,15 +8,15 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
-import Container from "@mui/material/Container";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import theme from "../../style/theme";
 import SideMenu from "./SideMenu";
-import { Button } from "@mui/material";
+import { Button, CssBaseline, useMediaQuery } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { supabase } from "../../utils/supabase";
+import { Outlet } from "react-router-dom";
 
 const drawerWidth: number = 240;
 
@@ -69,66 +68,62 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
-type LayoutProps = {
-  title: string;
-  children: React.ReactNode;
-};
-
 const logout = async () => {
   const { error } = await supabase.auth.signOut();
   if (error) {
     console.log(error);
   }
-  window.location.pathname = "/login";
 };
 
-const Layout: React.FC<LayoutProps> = ({ title, children }) => {
+const Layout = () => {
   const [open, setOpen] = React.useState(true);
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  if (isSmallScreen && open) {
+    toggleDrawer();
+  }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <AppBar position="absolute" open={open}>
-          <Toolbar
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
+      <CssBaseline />
+      <AppBar position="absolute" open={open}>
+        <Toolbar
+          sx={{
+            pr: "24px",
+          }}
+        >
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            onClick={toggleDrawer}
             sx={{
-              pr: "24px",
+              marginRight: "36px",
+              ...(open && { display: "none" }),
             }}
           >
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={toggleDrawer}
-              sx={{
-                marginRight: "36px",
-                ...(open && { display: "none" }),
-              }}
-            >
-              <MenuIcon />
-              {/* サイドメニューを開閉できるボタン */}
-            </IconButton>
-            <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}
-            >
-              {title}
-            </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-                {/* 通知ボタン */}
-              </Badge>
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Drawer variant="permanent" open={open}>
+            <MenuIcon />
+            {/* サイドメニューを開閉できるボタン */}
+          </IconButton>
+          <Typography
+            component="h1"
+            variant="h6"
+            color="inherit"
+            noWrap
+            sx={{ flexGrow: 1 }}
+          ></Typography>
+          <IconButton color="inherit">
+            <Badge badgeContent={4} color="secondary">
+              <NotificationsIcon />
+              {/* 通知ボタン */}
+            </Badge>
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <Drawer variant="permanent" open={open}>
+        <Box sx={{ flex: 1 }}>
           <Toolbar
             sx={{
               display: "flex",
@@ -143,47 +138,47 @@ const Layout: React.FC<LayoutProps> = ({ title, children }) => {
           </Toolbar>
           <Divider />
           <SideMenu />
+        </Box>
+        {/* ログアウト */}
+        <Box sx={{ p: 1 }}>
+          <Button
+            fullWidth
+            variant="contained"
+            startIcon={<LogoutIcon />}
+            onClick={logout}
+          >
+            {!isSmallScreen && open && "ログアウト"}
+          </Button>
+        </Box>
+      </Drawer>
 
-          {/* ログアウト */}
-          <Box sx={{ p: 1 }}>
-            <Button
-              fullWidth
-              variant="contained"
-              startIcon={<LogoutIcon />}
-              onClick={logout}
-            >
-              ログアウト
-            </Button>
-          </Box>
-        </Drawer>
-
-        {/* main */}
-        <Box
-          component="main"
+      {/* main */}
+      <Box
+        component="main"
+        sx={{
+          backgroundColor: (theme) =>
+            theme.palette.mode === "light" ? "white" : theme.palette.grey[900],
+          flex: "1 1 0",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Toolbar />
+        <Box sx={{ flex: "1 1 auto", flexGrow: 1, overflow: "hidden" }}>
+          <Outlet />
+        </Box>
+        {/* <Box
           sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
+            display: "flex",
+            justifyContent: "flex-end",
+            padding: (theme) => theme.spacing(1, 2),
+            backgroundColor: "#eee",
           }}
         >
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            {children}
-            <Box sx={{ pt: 4 }}>
-              <Typography variant="body2" color="text.secondary" align="center">
-                {"Copyright © my-app"}
-                {new Date().getFullYear()}
-                {"."}
-              </Typography>
-            </Box>
-          </Container>
-        </Box>
+          フッター
+        </Box> */}
       </Box>
-    </ThemeProvider>
+    </Box>
   );
 };
 

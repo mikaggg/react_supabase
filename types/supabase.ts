@@ -9,6 +9,69 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      chat_messages: {
+        Row: {
+          chat_room_id: string
+          content: string
+          content_type: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          chat_room_id: string
+          content: string
+          content_type: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          chat_room_id?: string
+          content?: string
+          content_type?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_chat_messages_chat_room_id_fkey"
+            columns: ["chat_room_id"]
+            isOneToOne: false
+            referencedRelation: "chat_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_chat_messages_user_idfkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_rooms: {
+        Row: {
+          client_user_id: string
+          created_at: string
+          id: string
+          organization_id: string
+        }
+        Insert: {
+          client_user_id: string
+          created_at?: string
+          id?: string
+          organization_id: string
+        }
+        Update: {
+          client_user_id?: string
+          created_at?: string
+          id?: string
+          organization_id?: string
+        }
+        Relationships: []
+      }
       countries: {
         Row: {
           id: number
@@ -24,12 +87,99 @@ export type Database = {
         }
         Relationships: []
       }
+      operators: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          name: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id: string
+          name?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          name: string | null
+          user_type: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string | null
+          user_type?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string | null
+          user_type?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_chat_message: {
+        Args: {
+          user_id: string
+          partner_id: string
+          message: string
+        }
+        Returns: undefined
+      }
+      get_chat_list:
+        | {
+            Args: {
+              user_id: string
+            }
+            Returns: {
+              id: string
+              email: string
+              name: string
+              created_at: string
+            }[]
+          }
+        | {
+            Args: {
+              user_id: string
+              user_name: string
+            }
+            Returns: {
+              id: string
+              email: string
+              name: string
+              created_at: string
+            }[]
+          }
+      get_chat_list_unique: {
+        Args: {
+          user_id: string
+        }
+        Returns: {
+          id: string
+          email: string
+          name: string
+          created_at: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
